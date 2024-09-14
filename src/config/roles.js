@@ -1,5 +1,5 @@
 const allRoles = {
-  user: ['generateItinerary', 'selfDetails'],
+  user: ['generateItinerary', 'selfDetails', 'locationImage'],
   admin: ['getUsers', 'manageUsers'],
 };
 

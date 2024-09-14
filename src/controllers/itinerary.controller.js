@@ -6,13 +6,23 @@ const itineraryService = require('../services/itinerary.service');
 const generate = catchAsync(async (req, res) => {
   const generateItineraryDto = req.body;
   console.log('user', req.user);
-  const prompt = await itineraryService.generateItinerary(generateItineraryDto);
-  if (!prompt) {
-    throw new ApiError(httpStatus.NOT_FOUND, 'Prompt not found');
+  const response = await itineraryService.generateItinerary(generateItineraryDto);
+  if (!response) {
+    throw new ApiError(httpStatus.NOT_FOUND, 'Response not found');
   }
-  res.send(prompt);
+  res.send(response);
+});
+
+const locationImage = catchAsync(async (req, res) => {
+  const { location } = req.query;
+  const response = await itineraryService.fetchLocationImage(location);
+  if (!response) {
+    throw new ApiError(httpStatus.NOT_FOUND, 'Response not found');
+  }
+  res.send(response);
 });
 
 module.exports = {
   generate,
+  locationImage,
 };
