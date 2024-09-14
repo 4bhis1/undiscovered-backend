@@ -61,15 +61,36 @@ const generateItinerary = async (generateItineraryDto) => {
 
 const fetchLocationImage = async (location) => {
   try {
-    const response = await axios.get(process.env.UNSPLASH_ENDPOINT, {
-      params: { query: location, client_id: process.env.UNSPLASH_API_KEY, per_page: 1 },
-    });
-    if (response.data.results.length > 0) {
-      return { url: response.data.results[0].urls.regular };
+    const imageSource = process.env.IMAGE_SOURCE;
+    let response;
+
+    if (imageSource == 'PIXABAY') {
+      // Fetch image from Pixabay
+      response = await axios.get(
+        `https://pixabay.com/api/?key=${process.env.PIXABAY_API_KEY}&q=${location}&image_type=photo`,
+        {}
+      );
+
+      if (response.data.hits.length > 0) {
+        return { url: response.data.hits[0].largeImageURL };
+      }
+    } else {
+      response = await axios.get(process.env.UNSPLASH_ENDPOINT, {
+        params: {
+          query: location,
+          client_id: process.env.UNSPLASH_API_KEY,
+          per_page: 1,
+        },
+      });
+
+      if (response.data.results.length > 0) {
+        return { url: response.data.results[0].urls.regular };
+      }
     }
+
     return {
       url: 'https://images.unsplash.com/photo-1488646953014-85cb44e25828?q=80&w=1335&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D',
-    }; // Return a default URL if no images are found
+    };
   } catch (error) {
     console.error('Error fetching image:', error);
     return '';

@@ -18,11 +18,6 @@ router
 
 router
   .route('/image')
-  .get(
-    auth('locationImage'),
-    aggregateRequestDataMiddleware,
-    validate(itineraryValidation.locationImage),
-    itineraryController.locationImage
-  );
+  .get(auth('locationImage'), validate(itineraryValidation.locationImage), itineraryController.locationImage);
 
 module.exports = router;

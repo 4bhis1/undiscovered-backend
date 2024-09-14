@@ -15,6 +15,7 @@ const generate = catchAsync(async (req, res) => {
 
 const locationImage = catchAsync(async (req, res) => {
   const { location } = req.query;
+  console.log("🚀 ~ locationImage ~ location:", location)
   const response = await itineraryService.fetchLocationImage(location);
   if (!response) {
     throw new ApiError(httpStatus.NOT_FOUND, 'Response not found');
