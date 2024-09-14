@@ -2,6 +2,36 @@ const mongoose = require('mongoose');
 const bcrypt = require('bcryptjs');
 const { toJSON, paginate } = require('./plugins');
 
+const AccommodationCostSchema = mongoose.Schema(
+  {
+    hostelCostPerNight: Number,
+    hotelCostPerNight: Number,
+    luxuryHotelCostPerNight: Number,
+    airbnbCostPerNight: Number,
+  },
+  { timestamps: true }
+);
+
+const TransportationCostSchema = mongoose.Schema(
+  {
+    busCost: Number,
+    taxiCost: Number,
+    trainCost: Number,
+    rentalCost: Number,
+  },
+  { timestamps: true }
+);
+
+const FoodCostSchema = mongoose.Schema(
+  {
+    streetFoodCost: Number,
+    budgetRestaurantCost: Number,
+    fancyRestaurantCost: Number,
+    traditionalFoodCost: Number,
+  },
+  { timestamps: true }
+);
+
 const itinerarySchema = mongoose.Schema(
   {
     user_id: {
@@ -68,6 +98,9 @@ const itinerarySchema = mongoose.Schema(
     short_history: {
       type: String,
     },
+    accommodation_estimated_costs: AccommodationCostSchema,
+    transportation_estimated_costs: TransportationCostSchema,
+    food_estimated_costs: FoodCostSchema,
   },
   {
     timestamps: true,
