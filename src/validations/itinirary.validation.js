@@ -4,7 +4,7 @@ const generateItinerary = {
   body: Joi.object().keys({
     destination: Joi.string().required(),
     budget: Joi.string().optional(),
-    preferences: Joi.array().items(Joi.string()).required(),
+    interests: Joi.array().items(Joi.string()).required(),
     checkinDate: Joi.string().required(),
     checkoutDate: Joi.string().required(),
     members: Joi.object()

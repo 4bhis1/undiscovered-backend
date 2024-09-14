@@ -9,11 +9,8 @@ const itineraryItemSchema = mongoose.Schema(
       ref: 'Itinerary',
       required: true,
     },
-    day: {
-      type: String,
-    },
     date: {
-      type: String,
+      type: Date,
     },
     day_no: {
       type: Number,

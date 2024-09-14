@@ -26,20 +26,16 @@ const programSchema = mongoose.Schema(
     },
     type: {
       type: String,
-      enum: ['flight', 'hotel', 'activity', 'dining'],
+      // enum: ['flight', 'hotel', 'activity', 'dining'],
     },
     description: {
       type: String,
     },
-    preferences: {
-      type: Map,
-      of: String,
-    },
-    status: {
-      type: String,
-      enum: ['draft', 'finalized'],
-      default: 'draft',
-    },
+    // status: {
+    //   type: String,
+    //   enum: ['draft', 'finalized'],
+    //   default: 'draft',
+    // },
   },
   {
     timestamps: true,

@@ -1,4 +1,7 @@
 const axios = require('axios');
+const itineraryRepository = require('../repositories/itinerary.repository');
+const itineraryItemRepository = require('../repositories/itineraryItem.repository');
+const programRepository = require('../repositories/program.repository');
 
 const parseAiData = (data) => {
   let content = data;
@@ -24,9 +27,17 @@ const parseAiData = (data) => {
   return content;
 };
 
-const generateItinerary = async (generateItineraryDto) => {
+const generateItinerary = async (generateItineraryDto, user) => {
   try {
-    const { destination, budget, interests, checkinDate, checkoutDate, members = {} } = generateItineraryDto || {};
+    const { destination, budget, interests = [], checkinDate, checkoutDate, members = {} } = generateItineraryDto || {};
+    const savedItinerary = await itineraryRepository.saveItinerary({
+      user_id: user,
+      destination,
+      budget,
+      interests,
+      start_date: checkinDate,
+      end_date: checkoutDate,
+    });
 
     const { adults, kids } = members || {};
 
@@ -34,7 +45,7 @@ const generateItinerary = async (generateItineraryDto) => {
 
     const noOfDays = differenceInTime / (1000 * 3600 * 24);
 
-    const format = `{destination: {numberOfDays: Number,destinationCities: array of String // possible cities to visit in span days ,destinationCountry: String,currency: String,oneDollarInLocalCurrency: Number,languagesSpoken: Array,timeThereInUtcFormat: String // eg. UTC + 2,capitalOfTheCountry: String, localWeather: String // eg. monsoon or continental or etc, temperatureRangeThroughTheYear: String,shortDescription: String // 2-3 sentances, shortHistory: String // 2-3 sentances,startDate: String,endDate: String},itinerary:[{day: number, date: String // eg. dayoftheweek day month, program: [{id: Number // continue with the next number on the next day,programOrPlaceName: String, timeSpentThere: String, location: String, coordinateOfEvent: [lng: number // longtitude as 5 decimals, lat: number // latitude as 5 decimals] // array like [lng, lat], shortDescriptionOfProgram: String // 2-3 sentances}, // ... Repeat for each program]}, // ... Repeat for each day], estimatedCosts: [{category: Accommodation, hostelCostPerNight: Number, hotelCostPerNight: Number,luxuryHotelCostPerNight: Number,airbnbCostPerNight: Number}, {category: Transportation,busCost: Number,taxiCost: Number,trainCost: Number,rentalCost: Number},{category: Food,streetFoodCost: Number,budgetRestaurantCost: Number,fancyRestaurantCost: Number,traditionalFoodCost: Number}, {category: Activities, mainActivityForEachDay: [{mainActivityName: String,costOfProgram: Number}, // ... Repeat for each day's main event and cost of program should be in INR]}]}`;
+    const format = `{destination: {numberOfDays: Number,destinationCities: array of String // possible cities to visit in span days ,destinationCountry: String,currency: String,oneDollarInLocalCurrency: Number,languagesSpoken: Array,timeThereInUtcFormat: String // eg. UTC + 2,capitalOfTheCountry: String, localWeather: String // eg. monsoon or continental or etc, temperatureRangeThroughTheYear: String,shortDescription: String // 2-3 sentances, shortHistory: String // 2-3 sentances,startDate: String,endDate: String},itinerary:[{day: number, date: Date // ISO date format, program: [{id: Number // continue with the next number on the next day,programOrPlaceName: String, timeSpentThere: String, location: String, coordinateOfEvent: [lng: number // longtitude as 5 decimals, lat: number // latitude as 5 decimals] // array like [lng, lat], shortDescriptionOfProgram: String // 2-3 sentances,cost:Number // approx cost in that program,type:String //return the type of program like hotel,flight,activity,dining etc}, // ... Repeat for each program]}, // ... Repeat for each day], estimatedCosts: [{category: Accommodation, hostelCostPerNight: Number, hotelCostPerNight: Number,luxuryHotelCostPerNight: Number,airbnbCostPerNight: Number}, {category: Transportation,busCost: Number,taxiCost: Number,trainCost: Number,rentalCost: Number},{category: Food,streetFoodCost: Number,budgetRestaurantCost: Number,fancyRestaurantCost: Number,traditionalFoodCost: Number}//Cost should be in INR]}`;
 
     const destinationPrompt = `Create a ${noOfDays}-day itinerary for a ${adults} adults and ${kids} childrens group trip to ${destination}`;
 
@@ -48,11 +59,70 @@ const generateItinerary = async (generateItineraryDto) => {
       prompt,
     });
 
-    const { response } = data || {};
+    let parsedResponse = parseAiData(data.response);
 
-    let parsedResponse = parseAiData(response);
+    const { destination: _destination = {}, itinerary: itineraryItems = [], estimatedCosts = [] } = parsedResponse || {};
 
-    return parsedResponse;
+    const {
+      numberOfDays,
+      destinationCities = [],
+      destinationCountry,
+      currency,
+      oneDollarInLocalCurrency,
+      languagesSpoken,
+      timeThereInUtcFormat,
+      capitalOfTheCountry,
+      localWeather,
+      temperatureRangeThroughTheYear,
+      shortDescription,
+      shortHistory,
+    } = _destination || {};
+
+    await itineraryRepository.updateItinerary(savedItinerary._id, {
+      number_of_days: numberOfDays,
+      destination_cities: destinationCities,
+      destination_country: destinationCountry,
+      currency,
+      one_dollar_in_local_currency: oneDollarInLocalCurrency,
+      languages_spoken: languagesSpoken,
+      time_format: timeThereInUtcFormat,
+      capital_of_country: capitalOfTheCountry,
+      local_weather: localWeather,
+      temparature_range: temperatureRangeThroughTheYear,
+      short_desc: shortDescription,
+      short_history: shortHistory,
+    });
+
+    for (let item of itineraryItems) {
+      const { day, date, program = [] } = item || {};
+
+      let savedItineraryItem = await itineraryItemRepository.saveItineraryItem({
+        itinerary_id: savedItinerary._id,
+        date: date,
+        day_no: day,
+      });
+
+      for (let doc of program) {
+        let { programOrPlaceName, timeSpentThere, location, coordinateOfEvent, shortDescriptionOfProgram, cost, type } =
+          doc || {};
+
+        await programRepository.saveProgram({
+          itinerary_item_id: savedItineraryItem._id,
+          cost,
+          place: programOrPlaceName,
+          estimated_time: timeSpentThere,
+          location,
+          coordinate: coordinateOfEvent,
+          type,
+          description: shortDescriptionOfProgram,
+        });
+      }
+    }
+
+    let [itineraryData] = await itineraryRepository.getItineraryWithDetails(savedItinerary._id);
+
+    itineraryData.estimatedCosts = estimatedCosts;
+    return itineraryData;
   } catch (error) {
     console.error('Error making POST request:', error);
     throw error;

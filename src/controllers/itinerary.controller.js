@@ -5,8 +5,7 @@ const itineraryService = require('../services/itinerary.service');
 
 const generate = catchAsync(async (req, res) => {
   const generateItineraryDto = req.body;
-  console.log('user', req.user);
-  const response = await itineraryService.generateItinerary(generateItineraryDto);
+  const response = await itineraryService.generateItinerary(generateItineraryDto, req.user);
   if (!response) {
     throw new ApiError(httpStatus.NOT_FOUND, 'Response not found');
   }
