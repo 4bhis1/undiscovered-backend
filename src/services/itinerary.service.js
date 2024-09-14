@@ -125,7 +125,6 @@ const generateItinerary = async (generateItineraryDto, user) => {
 
     let [itineraryData] = await itineraryRepository.getItineraryWithDetails(savedItinerary._id);
 
-    // itineraryData.estimatedCosts = estimatedCosts;
     return itineraryData;
   } catch (error) {
     console.error('Error making POST request:', error);
@@ -171,4 +170,52 @@ const fetchLocationImage = async (location) => {
   }
 };
 
-module.exports = { generateItinerary, fetchLocationImage };
+const regenerateItineraryProgram = async (programId, suggestion) => {
+  console.log('🚀 ~ regenerateItineraryProgram ~ suggestion:', suggestion);
+  console.log('🚀 ~ regenrateItineraryProgram ~ programId:', programId);
+
+  try {
+    const programData = await programRepository.findProgramAndPopulate(programId);
+    console.log('🚀 ~ regenerateItineraryProgram ~ programData:', programData);
+
+    const { itinerary_item_id: { itinerary_id } = {}, ...restProgramData } = programData || {};
+    console.log('🚀 ~ regenerateItineraryProgram ~ restProgramData:', restProgramData);
+
+    const itineraryPrograms = await programRepository.findProgramsByItineraryId(itinerary_id._id);
+
+    let prompt = `You are tasked with regenerating the following program based on a given suggestion. 
+
+    Here is the current program data: ${JSON.stringify(restProgramData)}
+    
+    Here is the suggestion for changes: (${suggestion})
+    
+    Here is the list of all programs for the full itinerary: ${JSON.stringify(itineraryPrograms)}
+    
+    Please make the following changes to the current program based on the suggestion:
+    1. Identify the parts of the program that need to be updated.
+    2. Apply the changes exactly as described in the suggestion.
+    3. Ensure that the regenerated program maintains the same structure and keys as the current program.
+    
+    Return only the updated program in JSON format. Ensure that no extra information is included. Make changes as given in suggestion`;
+    console.log('🚀 ~ regenerateItineraryProgram ~ prompt:', prompt);
+    const { data } = await axios.post(process.env.UNDISCOVERED_AI_ENDPOINT, {
+      prompt,
+    });
+
+    console.log(data);
+
+    const parsedResponse = await parseAiData(data.response);
+
+    let { place, estimated_time, location, coordinate, shortDescriptionOfProgram, cost, type } =
+      parsedResponse || {};
+
+    await programRepository.updateProgram(programId, parsedResponse);
+
+    const updatedProgram = await programRepository.findProgramById(programId);
+
+    return updatedProgram;
+  } catch (error) {
+    throw error;
+  }
+};
+module.exports = { generateItinerary, fetchLocationImage, regenerateItineraryProgram };

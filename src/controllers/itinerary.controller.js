@@ -12,9 +12,28 @@ const generate = catchAsync(async (req, res) => {
   res.send(response);
 });
 
+const regenerateItineraryProgram = catchAsync(async (req, res) => {
+  const { programId = null } = req.params;
+  const { suggestion } = req.body;
+  const response = await itineraryService.regenerateItineraryProgram(programId, suggestion);
+  if (!response) {
+    throw new ApiError(httpStatus.NOT_FOUND, 'Response not found');
+  }
+  res.send(response);
+});
+
+const removeItineraryProgram = catchAsync(async (req, res) => {
+  const { programId = null } = req.body;
+  const response = await itineraryService.removeItineraryProgram(programId);
+  if (!response) {
+    throw new ApiError(httpStatus.NOT_FOUND, 'Response not found');
+  }
+  res.send(response);
+});
+
 const locationImage = catchAsync(async (req, res) => {
   const { location } = req.query;
-  console.log("🚀 ~ locationImage ~ location:", location)
+  console.log('🚀 ~ locationImage ~ location:', location);
   const response = await itineraryService.fetchLocationImage(location);
   if (!response) {
     throw new ApiError(httpStatus.NOT_FOUND, 'Response not found');
@@ -25,4 +44,6 @@ const locationImage = catchAsync(async (req, res) => {
 module.exports = {
   generate,
   locationImage,
+  regenerateItineraryProgram,
+  removeItineraryProgram,
 };
