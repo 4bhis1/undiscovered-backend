@@ -78,6 +78,7 @@ const generateItinerary = async (generateItineraryDto, user) => {
       shortHistory,
     } = _destination || {};
 
+    const [accommodation_estimated_costs, transportation_estimated_costs, food_estimated_costs] = estimatedCosts;
     await itineraryRepository.updateItinerary(savedItinerary._id, {
       number_of_days: numberOfDays,
       destination_cities: destinationCities,
@@ -91,6 +92,9 @@ const generateItinerary = async (generateItineraryDto, user) => {
       temparature_range: temperatureRangeThroughTheYear,
       short_desc: shortDescription,
       short_history: shortHistory,
+      accommodation_estimated_costs,
+      transportation_estimated_costs,
+      food_estimated_costs,
     });
 
     for (let item of itineraryItems) {
@@ -121,7 +125,7 @@ const generateItinerary = async (generateItineraryDto, user) => {
 
     let [itineraryData] = await itineraryRepository.getItineraryWithDetails(savedItinerary._id);
 
-    itineraryData.estimatedCosts = estimatedCosts;
+    // itineraryData.estimatedCosts = estimatedCosts;
     return itineraryData;
   } catch (error) {
     console.error('Error making POST request:', error);
