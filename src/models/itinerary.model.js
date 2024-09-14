@@ -16,9 +16,8 @@ const itinerarySchema = mongoose.Schema(
     budget: {
       type: Number,
     },
-    preferences: {
-      type: Map,
-      of: String,
+    interests: {
+      type: [String],
     },
     start_date: {
       type: Date,
@@ -32,6 +31,42 @@ const itinerarySchema = mongoose.Schema(
       type: String,
       enum: ['draft', 'finalized'],
       default: 'draft',
+    },
+    number_of_days: {
+      type: Number,
+    },
+    destination_cities: {
+      type: [String],
+    },
+    destination_country: {
+      type: String,
+    },
+    currency: {
+      type: String,
+    },
+    one_dollar_in_local_currency: {
+      type: Number,
+    },
+    languages_spoken: {
+      type: [String],
+    },
+    time_format: {
+      type: String,
+    },
+    capital_of_country: {
+      type: String,
+    },
+    local_weather: {
+      type: String,
+    },
+    temparature_range: {
+      type: String,
+    },
+    short_desc: {
+      type: String,
+    },
+    short_history: {
+      type: String,
     },
   },
   {
