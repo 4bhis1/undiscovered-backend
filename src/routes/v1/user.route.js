@@ -7,6 +7,8 @@ const aggregateRequestDataMiddleware = require('../../middlewares/requestParamet
 
 const router = express.Router();
 
+router.get('/verify-token', auth('selfDetails'), aggregateRequestDataMiddleware, userController.getCurrentLoggedInUser);
+
 router
   .route('/')
   .post(auth('manageUsers'), aggregateRequestDataMiddleware, validate(userValidation.createUser), userController.createUser)

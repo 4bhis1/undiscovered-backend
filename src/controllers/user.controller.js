@@ -4,6 +4,20 @@ const ApiError = require('../utils/ApiError');
 const catchAsync = require('../utils/catchAsync');
 const { userService } = require('../services');
 
+const getCurrentLoggedInUser = catchAsync(async (req, res) => {
+  let { user } = req.allParams || {};
+  const document = await userService.getUserById({
+    id: user?.id,
+  });
+  if (!document) {
+    throw new ApiError(httpStatus.NOT_FOUND, ' USER NOT FOUND');
+  }
+  res.status(httpStatus.OK).json({
+    status: httpStatus.OK,
+    data: document,
+  });
+});
+
 const createUser = catchAsync(async (req, res) => {
   const user = await userService.createUser(req.body);
   res.status(httpStatus.CREATED).send(user);
@@ -40,4 +54,5 @@ module.exports = {
   getUser,
   updateUser,
   deleteUser,
+  getCurrentLoggedInUser,
 };
