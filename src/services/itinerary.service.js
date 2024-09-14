@@ -1,6 +1,6 @@
 const axios = require('axios');
 
-const parseData = (data) => {
+const parseAiData = (data) => {
   let content = data;
 
   try {
@@ -25,8 +25,6 @@ const parseData = (data) => {
 };
 
 const generateItinerary = async (generateItineraryDto) => {
-  console.log('🚀 ~ generateItinerary ~ generateItineraryDto:', generateItineraryDto);
-
   try {
     const { destination, budget, interests, checkinDate, checkoutDate, members = {} } = generateItineraryDto || {};
 
@@ -46,13 +44,13 @@ const generateItinerary = async (generateItineraryDto) => {
 
     const prompt = budget ? `${destinationPrompt} ${budgetPrompt}, ${datePrompt}` : `${destinationPrompt}, ${datePrompt}`;
 
-    const { data } = await axios.post('http://172.18.0.13:5000/generate', {
+    const { data } = await axios.post(process.env.UNDISCOVERED_AI_ENDPOINT, {
       prompt,
     });
 
     const { response } = data || {};
 
-    let parsedResponse = parseData(response);
+    let parsedResponse = parseAiData(response);
 
     return parsedResponse;
   } catch (error) {
@@ -61,4 +59,21 @@ const generateItinerary = async (generateItineraryDto) => {
   }
 };
 
-module.exports = { generateItinerary };
+const fetchLocationImage = async (location) => {
+  try {
+    const response = await axios.get(process.env.UNSPLASH_ENDPOINT, {
+      params: { query: location, client_id: process.env.UNSPLASH_API_KEY, per_page: 1 },
+    });
+    if (response.data.results.length > 0) {
+      return { url: response.data.results[0].urls.regular };
+    }
+    return {
+      url: 'https://images.unsplash.com/photo-1488646953014-85cb44e25828?q=80&w=1335&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D',
+    }; // Return a default URL if no images are found
+  } catch (error) {
+    console.error('Error fetching image:', error);
+    return '';
+  }
+};
+
+module.exports = { generateItinerary, fetchLocationImage };

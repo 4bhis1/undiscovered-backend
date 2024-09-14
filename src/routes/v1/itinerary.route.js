@@ -1,7 +1,7 @@
 const express = require('express');
 const auth = require('../../middlewares/auth');
 const validate = require('../../middlewares/validate');
-const userValidation = require('../../validations/user.validation');
+const itineraryValidation = require('../../validations/itinirary.validation');
 const itineraryController = require('../../controllers/itinerary.controller');
 const aggregateRequestDataMiddleware = require('../../middlewares/requestParameterHandler');
 
@@ -12,8 +12,17 @@ router
   .post(
     auth('generateItinerary'),
     aggregateRequestDataMiddleware,
-    validate(userValidation.generateItinerary),
+    validate(itineraryValidation.generateItinerary),
     itineraryController.generate
+  );
+
+router
+  .route('/image')
+  .get(
+    auth('locationImage'),
+    aggregateRequestDataMiddleware,
+    validate(itineraryValidation.locationImage),
+    itineraryController.locationImage
   );
 
 module.exports = router;

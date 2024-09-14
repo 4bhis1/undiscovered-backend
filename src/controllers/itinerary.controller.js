@@ -13,6 +13,16 @@ const generate = catchAsync(async (req, res) => {
   res.send(response);
 });
 
+const locationImage = catchAsync(async (req, res) => {
+  const { location } = req.query;
+  const response = await itineraryService.fetchLocationImage(location);
+  if (!response) {
+    throw new ApiError(httpStatus.NOT_FOUND, 'Response not found');
+  }
+  res.send(response);
+});
+
 module.exports = {
   generate,
+  locationImage,
 };

@@ -1,7 +1,7 @@
 const Joi = require('joi');
 
 const generateItinerary = {
-  body: Joi().keys({
+  body: Joi.object().keys({
     destination: Joi.string().required(),
     budget: Joi.string().optional(),
     preferences: Joi.array().items(Joi.string()).required(),
@@ -16,6 +16,13 @@ const generateItinerary = {
   }),
 };
 
+const locationImage = {
+  query: Joi.object().keys({
+    location: Joi.string().required(),
+  }),
+};
+
 module.exports = {
   generateItinerary,
+  locationImage,
 };
