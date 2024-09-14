@@ -5,9 +5,10 @@ const catchAsync = require('../utils/catchAsync');
 const { userService } = require('../services');
 
 const getCurrentLoggedInUser = catchAsync(async (req, res) => {
-  let { user } = req.allParams || {};
+  let { user } = req;
+  console.log(req)
   const document = await userService.getUserById({
-    id: user?.id,
+    id: user?._id,
   });
   if (!document) {
     throw new ApiError(httpStatus.NOT_FOUND, ' USER NOT FOUND');
