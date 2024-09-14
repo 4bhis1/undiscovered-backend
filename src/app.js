@@ -21,6 +21,10 @@ if (config.env !== 'test') {
   app.use(morgan.errorHandler);
 }
 
+app.get('/', (req, res) => {
+  res.send('Undiscovered backend Server is running...');
+});
+
 // set security HTTP headers
 app.use(helmet());
 
@@ -38,8 +42,13 @@ app.use(mongoSanitize());
 app.use(compression());
 
 // enable cors
-app.use(cors());
-app.options('*', cors());
+const corsOptions = {
+  origin: config.allowedOrigins,
+  credentials: true,
+};
+
+app.use(cors(corsOptions));
+app.options('*', cors(corsOptions));
 
 // jwt authentication
 app.use(passport.initialize());
