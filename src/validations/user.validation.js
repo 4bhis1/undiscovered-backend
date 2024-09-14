@@ -46,19 +46,10 @@ const deleteUser = {
   }),
 };
 
-const generateItinerary = {
-  body: Joi.object().keys({
-    destination: Joi.string().required(),
-    budget: Joi.string().required(),
-    preferences: Joi.array().required(),
-  }),
-};
-
 module.exports = {
   createUser,
   getUsers,
   getUser,
   updateUser,
   deleteUser,
-  generateItinerary,
 };
