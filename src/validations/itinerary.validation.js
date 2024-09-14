@@ -16,6 +16,18 @@ const generateItinerary = {
   }),
 };
 
+const regenerateItineraryProgram = {
+  params: Joi.object().keys({
+    programId: Joi.string().required(),
+  }),
+};
+
+const removeItineraryProgram = {
+  query: Joi.object().keys({
+    programId: Joi.string().required(),
+  }),
+};
+
 const locationImage = {
   query: Joi.object().keys({
     location: Joi.string().required(),
@@ -25,4 +37,6 @@ const locationImage = {
 module.exports = {
   generateItinerary,
   locationImage,
+  regenerateItineraryProgram,
+  removeItineraryProgram,
 };

@@ -58,5 +58,5 @@ programSchema.pre('save', async function (next) {
  * @typedef itinerarySchema
  */
 
-const Itinerary = mongoose.model('Program', programSchema);
-module.exports = Itinerary;
+const Program = mongoose.model('Program', programSchema);
+module.exports = Program;
