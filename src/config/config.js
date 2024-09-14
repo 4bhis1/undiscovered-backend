@@ -19,6 +19,7 @@ const envVarsSchema = Joi.object()
     JWT_VERIFY_EMAIL_EXPIRATION_MINUTES: Joi.number()
       .default(10)
       .description('minutes after which verify email token expires'),
+    CLIENT_ID: Joi.string().description('client id for google login'),
     SMTP_HOST: Joi.string().description('server that will send the emails'),
     SMTP_PORT: Joi.number().description('port to connect to the email server'),
     SMTP_USERNAME: Joi.string().description('username for email server'),
@@ -62,5 +63,8 @@ module.exports = {
       },
     },
     from: envVars.EMAIL_FROM,
+  },
+  google: {
+    clientId: envVars.CLIENT_ID,
   },
 };
