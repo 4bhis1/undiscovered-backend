@@ -22,8 +22,6 @@ const parseAiData = (data) => {
     content = JSON.parse(resultData);
   }
 
-  console.log(JSON.stringify(content));
-
   return content;
 };
 
@@ -55,11 +53,20 @@ const generateItinerary = async (generateItineraryDto, user) => {
 
     const prompt = budget ? `${destinationPrompt} ${budgetPrompt}, ${datePrompt}` : `${destinationPrompt}, ${datePrompt}`;
 
-    const { data } = await axios.post(process.env.UNDISCOVERED_AI_ENDPOINT, {
+    let { data } = await axios.post(process.env.UNDISCOVERED_AI_ENDPOINT, {
       prompt,
     });
 
-    let parsedResponse = parseAiData(data.response);
+    let parsedResponse;
+    try {
+      parsedResponse = parseAiData(data.response);
+    } catch (e) {
+      let { data: _data } = await axios.post(process.env.UNDISCOVERED_AI_ENDPOINT, {
+        prompt,
+      });
+
+      parsedResponse = parseAiData(_data.response);
+    }
 
     const { destination: _destination = {}, itinerary: itineraryItems = [], estimatedCosts = [] } = parsedResponse || {};
 
