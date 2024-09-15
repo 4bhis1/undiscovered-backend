@@ -41,9 +41,29 @@ const locationImage = catchAsync(async (req, res) => {
   res.send(response);
 });
 
+const getItinerary = catchAsync(async (req, res) => {
+  const { itineraryId = null } = req.params;
+  const response = await itineraryService.getItinerary(itineraryId);
+  if (!response) {
+    throw new ApiError(httpStatus.NOT_FOUND, 'Response not found');
+  }
+  res.send(response);
+});
+
+const getUsersItineraries = catchAsync(async (req, res) => {
+  const { _id: userId } = req.user;
+  const response = await itineraryService.getUsersItineraries(userId);
+  if (!response) {
+    throw new ApiError(httpStatus.NOT_FOUND, 'Response not found');
+  }
+  res.send(response);
+});
+
 module.exports = {
   generate,
   locationImage,
   regenerateItineraryProgram,
   removeItineraryProgram,
+  getItinerary,
+  getUsersItineraries,
 };

@@ -7,12 +7,14 @@ const aggregateRequestDataMiddleware = require('../../middlewares/requestParamet
 
 const router = express.Router();
 
-router.route('/generate').post(
-  auth('generateItinerary'),
-  aggregateRequestDataMiddleware,
-  validate(itineraryValidation.generateItinerary),
-  itineraryController.generate
-);
+router
+  .route('/generate')
+  .post(
+    auth('generateItinerary'),
+    aggregateRequestDataMiddleware,
+    validate(itineraryValidation.generateItinerary),
+    itineraryController.generate
+  );
 
 router
   .route('/regenerate-program/:programId')
@@ -38,4 +40,9 @@ router.route('/image').get(
   itineraryController.locationImage
 );
 
+router
+  .route('/:itineraryId')
+  .get(auth('getItinerary'), validate(itineraryValidation.getItinerary), itineraryController.getItinerary);
+
+router.route('/').get(auth('getItinerary'), itineraryController.getUsersItineraries);
 module.exports = router;

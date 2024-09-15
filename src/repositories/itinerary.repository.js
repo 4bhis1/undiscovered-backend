@@ -97,10 +97,15 @@ const getItineraryWithDetails = async (itineraryId) => {
   ]);
 };
 
+const getItineraries = (userId) => {
+  return Itinerary.find({ user_id: userId });
+};
+
 module.exports = {
   saveItinerary,
   findItineraryById,
   updateItinerary,
   deleteItinerary,
   getItineraryWithDetails,
+  getItineraries,
 };

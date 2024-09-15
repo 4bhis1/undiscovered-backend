@@ -206,8 +206,7 @@ const regenerateItineraryProgram = async (programId, suggestion) => {
 
     const parsedResponse = await parseAiData(data.response);
 
-    let { place, estimated_time, location, coordinate, shortDescriptionOfProgram, cost, type } =
-      parsedResponse || {};
+    let { place, estimated_time, location, coordinate, shortDescriptionOfProgram, cost, type } = parsedResponse || {};
 
     await programRepository.updateProgram(programId, parsedResponse);
 
@@ -218,4 +217,29 @@ const regenerateItineraryProgram = async (programId, suggestion) => {
     throw error;
   }
 };
-module.exports = { generateItinerary, fetchLocationImage, regenerateItineraryProgram };
+
+const getItinerary = async (itineraryId) => {
+  try {
+    const itineraryData = await itineraryRepository.getItineraryWithDetails(itineraryId);
+    return itineraryData;
+  } catch (error) {
+    throw error;
+  }
+};
+
+const getUsersItineraries = async (userId) => {
+  try {
+    const itineraries = await itineraryRepository.getItineraries(userId);
+
+
+    if (itineraries.length == 0) {
+      throw new ApiError(httpStatus.NOT_FOUND, 'No itineraries found');
+    }
+
+    return { itineraries };
+  } catch (error) {
+    throw error;
+  }
+};
+
+module.exports = { generateItinerary, fetchLocationImage, regenerateItineraryProgram, getItinerary, getUsersItineraries };

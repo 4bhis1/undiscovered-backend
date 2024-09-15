@@ -34,9 +34,19 @@ const locationImage = {
   }),
 };
 
+const getItinerary = {
+  params: Joi.object().keys({
+    itineraryId: Joi.string().required(),
+  }),
+};
+
+const getUsersItineraries = {};
+
 module.exports = {
   generateItinerary,
   locationImage,
   regenerateItineraryProgram,
   removeItineraryProgram,
+  getItinerary,
+  getUsersItineraries,
 };
