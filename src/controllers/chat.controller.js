@@ -4,8 +4,7 @@ const catchAsync = require('../utils/catchAsync');
 const { chatService } = require('../services');
 
 const chat = catchAsync(async (req, res) => {
-  const { itineraryId } = req.params;
-  const { message } = req.body;
+  const { message, itineraryId } = req.body;
 
   if (!req.user) {
     throw new ApiError(httpStatus.UNAUTHORIZED, 'User not found');

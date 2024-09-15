@@ -8,7 +8,7 @@ const { chatController } = require('../../controllers');
 const router = express.Router();
 
 router
-  .route('/:itineraryId')
+  .route('/ask-chatbot')
   .post(
     auth('generateItinerary'),
     aggregateRequestDataMiddleware,
