@@ -14,7 +14,7 @@ const chat = catchAsync(async (req, res) => {
   if (!response) {
     throw new ApiError(httpStatus.NOT_FOUND, 'Response not found');
   }
-  res.send(response);
+  res.send({ chat: response });
 });
 
 module.exports = {
