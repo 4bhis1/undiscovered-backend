@@ -3,10 +3,13 @@ const chatRepository = require('../repositories/chat.repository');
 const itineraryRepository = require('../repositories/itinerary.repository');
 
 const generateMessage = (chats, short_desc) => {
+  const shortDescPrompt = `Our short_desc of itinerary is: ${short_desc}`;
+
+  const prompt = short_desc ? `You are an itinerary planner bot. ${shortDescPrompt}` : `You are an itinerary planner bot.`;
   let messages = [
     {
       role: 'system',
-      content: `You are an itinerary planner bot. Our short_desc of itinerary is: ${short_desc}`,
+      content: prompt,
     },
   ];
 
@@ -33,7 +36,7 @@ const chatWithAi = async (itineraryId, message, user) => {
 
   await chatRepository.saveChat(user, message, itineraryId, false);
 
-  const chats = await chatRepository.getChats(itineraryId);
+  const chats = await chatRepository.getChats(itineraryId, user);
 
   let messages = generateMessage(chats, itinerary?.short_desc);
 

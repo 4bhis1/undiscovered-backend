@@ -10,8 +10,18 @@ const saveChat = async (user, message, itineraryId, bot) => {
   return chat.save();
 };
 
-const getChats = async (itineraryId) => {
-  return Chat.find({ itinerary: itineraryId }).sort({ createdAt: 1 });
+const getChats = async (itineraryId, user) => {
+  let filter = { user };
+
+  
+  if (!itineraryId) {
+    filter.itinerary = { $exists: false };
+  } else {
+    filter.itinerary = itineraryId;
+  }
+
+
+  return Chat.find(filter).sort({ createdAt: 1 });
 };
 
 module.exports = {
