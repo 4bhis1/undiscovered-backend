@@ -171,15 +171,10 @@ const fetchLocationImage = async (location) => {
 };
 
 const regenerateItineraryProgram = async (programId, suggestion) => {
-  console.log('🚀 ~ regenerateItineraryProgram ~ suggestion:', suggestion);
-  console.log('🚀 ~ regenrateItineraryProgram ~ programId:', programId);
-
   try {
     const programData = await programRepository.findProgramAndPopulate(programId);
-    console.log('🚀 ~ regenerateItineraryProgram ~ programData:', programData);
 
     const { itinerary_item_id: { itinerary_id } = {}, ...restProgramData } = programData || {};
-    console.log('🚀 ~ regenerateItineraryProgram ~ restProgramData:', restProgramData);
 
     const itineraryPrograms = await programRepository.findProgramsByItineraryId(itinerary_id._id);
 
@@ -197,7 +192,6 @@ const regenerateItineraryProgram = async (programId, suggestion) => {
     3. Ensure that the regenerated program maintains the same structure and keys as the current program.
     
     Return only the updated program in JSON format. Ensure that no extra information is included. Make changes as given in suggestion`;
-    console.log('🚀 ~ regenerateItineraryProgram ~ prompt:', prompt);
     const { data } = await axios.post(process.env.UNDISCOVERED_AI_ENDPOINT, {
       prompt,
     });
@@ -205,8 +199,6 @@ const regenerateItineraryProgram = async (programId, suggestion) => {
     console.log(data);
 
     const parsedResponse = await parseAiData(data.response);
-
-    let { place, estimated_time, location, coordinate, shortDescriptionOfProgram, cost, type } = parsedResponse || {};
 
     await programRepository.updateProgram(programId, parsedResponse);
 
@@ -231,7 +223,6 @@ const getUsersItineraries = async (userId) => {
   try {
     const itineraries = await itineraryRepository.getItineraries(userId);
 
-
     if (itineraries.length == 0) {
       throw new ApiError(httpStatus.NOT_FOUND, 'No itineraries found');
     }
@@ -242,4 +233,20 @@ const getUsersItineraries = async (userId) => {
   }
 };
 
-module.exports = { generateItinerary, fetchLocationImage, regenerateItineraryProgram, getItinerary, getUsersItineraries };
+const removeItineraryProgram = async (programId) => {
+  try {
+    const program = await programRepository.removeProgram(programId);
+    return program;
+  } catch (error) {
+    throw error;
+  }
+};
+
+module.exports = {
+  generateItinerary,
+  fetchLocationImage,
+  regenerateItineraryProgram,
+  getItinerary,
+  getUsersItineraries,
+  removeItineraryProgram,
+};

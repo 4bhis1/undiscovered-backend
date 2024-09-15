@@ -26,7 +26,7 @@ router
   );
 
 router
-  .route('/remove-program')
+  .route('/remove-program/:programId')
   .delete(
     auth('generateItinerary'),
     aggregateRequestDataMiddleware,

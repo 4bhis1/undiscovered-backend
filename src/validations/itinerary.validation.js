@@ -23,7 +23,7 @@ const regenerateItineraryProgram = {
 };
 
 const removeItineraryProgram = {
-  query: Joi.object().keys({
+  params: Joi.object().keys({
     programId: Joi.string().required(),
   }),
 };

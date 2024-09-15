@@ -40,6 +40,10 @@ const findProgramsByItineraryId = async (itineraryId) => {
 
   return programs;
 };
+
+const removeProgram = async (id) => {
+  return Program.findByIdAndRemove(id);
+};
 module.exports = {
   saveProgram,
   findProgramById,
@@ -47,4 +51,5 @@ module.exports = {
   deleteProgram,
   findProgramAndPopulate,
   findProgramsByItineraryId,
+  removeProgram,
 };
