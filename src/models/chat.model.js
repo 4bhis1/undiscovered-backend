@@ -5,7 +5,6 @@ const chatSchema = mongoose.Schema(
     itinerary: {
       type: mongoose.SchemaTypes.ObjectId,
       ref: 'Itinerary',
-      required: true,
     },
     user: {
       type: mongoose.SchemaTypes.ObjectId,
