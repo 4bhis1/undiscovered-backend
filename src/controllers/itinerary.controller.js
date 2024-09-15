@@ -23,12 +23,12 @@ const regenerateItineraryProgram = catchAsync(async (req, res) => {
 });
 
 const removeItineraryProgram = catchAsync(async (req, res) => {
-  const { programId = null } = req.body;
-  const response = await itineraryService.removeItineraryProgram(programId);
-  if (!response) {
+  const { programId = null } = req.params;
+  const program = await itineraryService.removeItineraryProgram(programId);
+  if (!program) {
     throw new ApiError(httpStatus.NOT_FOUND, 'Response not found');
   }
-  res.send(response);
+  res.send(program);
 });
 
 const locationImage = catchAsync(async (req, res) => {

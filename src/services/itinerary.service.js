@@ -231,7 +231,6 @@ const getUsersItineraries = async (userId) => {
   try {
     const itineraries = await itineraryRepository.getItineraries(userId);
 
-
     if (itineraries.length == 0) {
       throw new ApiError(httpStatus.NOT_FOUND, 'No itineraries found');
     }
@@ -242,4 +241,20 @@ const getUsersItineraries = async (userId) => {
   }
 };
 
-module.exports = { generateItinerary, fetchLocationImage, regenerateItineraryProgram, getItinerary, getUsersItineraries };
+const removeItineraryProgram = async (programId) => {
+  try {
+    const program = await programRepository.removeProgram(programId);
+    return program;
+  } catch (error) {
+    throw error;
+  }
+};
+
+module.exports = {
+  generateItinerary,
+  fetchLocationImage,
+  regenerateItineraryProgram,
+  getItinerary,
+  getUsersItineraries,
+  removeItineraryProgram,
+};
