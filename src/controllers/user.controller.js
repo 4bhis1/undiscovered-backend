@@ -6,7 +6,6 @@ const { userService } = require('../services');
 
 const getCurrentLoggedInUser = catchAsync(async (req, res) => {
   let { user } = req;
-  console.log(req)
   const document = await userService.getUserById({
     id: user?._id,
   });
