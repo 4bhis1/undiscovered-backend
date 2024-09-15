@@ -43,7 +43,7 @@ const locationImage = catchAsync(async (req, res) => {
 
 const getItinerary = catchAsync(async (req, res) => {
   const { itineraryId = null } = req.params;
-  const response = await itineraryService.getItinerary(itineraryId);
+  const [response] = await itineraryService.getItinerary(itineraryId);
   if (!response) {
     throw new ApiError(httpStatus.NOT_FOUND, 'Response not found');
   }
